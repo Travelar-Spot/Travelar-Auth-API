@@ -1,0 +1,62 @@
+name: CI - Auth API
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main, pt_controle_2]
+
+jobs:
+  quality-assurance:
+    name: Quality Check (Lint, Build & Tests)
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: developer
+          POSTGRES_PASSWORD: travelar_pass
+          POSTGRES_DB: travelar_auth_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout do Código
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Instalar Dependências
+        run: npm ci
+
+      - name: Verificar Linting (ESLint)
+        run: npm run lint
+
+      - name: Verificar Build (Transpilação)
+        run: npm run build
+
+      - name: Rodar Testes (Jest)
+        run: npm test
+        env:
+          NODE_ENV: test
+          AUTH_API_PORT: 4000
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USERNAME: developer
+          DB_PASSWORD: travelar_pass
+          DB_DATABASE: travelar_auth_db
+          JWT_SECRET: secret_test_ci
+          JWT_EXPIRES_IN: 1h
+          REFRESH_TOKEN_SECRET: refresh_secret_test_ci
+          REFRESH_TOKEN_EXPIRES_IN: 1d
+          CORS_ORIGIN: http://localhost:5173
