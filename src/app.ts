@@ -6,10 +6,10 @@ import passport from "./config/passport.config";
 
 const app = express();
 
-app.use(cors({ origin: config.corsOrigin }));
+app.use(cors({ origin: config.corsOrigin || "*" }));
+
 app.use(express.json());
 app.use(passport.initialize());
-app.use(cors({ origin: "*" }));
 
 app.use("/auth", authRoutes);
 
