@@ -10,7 +10,10 @@ export const AppDataSource = new DataSource({
   username: config.database.username,
   password: config.database.password,
   database: config.database.name,
-  synchronize: config.nodeEnv === "development" || config.nodeEnv === "test" || process.env.DB_SYNC === "true",
+  synchronize:
+    config.nodeEnv === "development" ||
+    config.nodeEnv === "test" ||
+    process.env.DB_SYNC === "true",
   logging: false,
   entities: [Usuario],
   migrations: ["src/database/migrations/*.ts"],
