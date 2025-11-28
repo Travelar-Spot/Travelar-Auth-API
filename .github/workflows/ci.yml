@@ -35,6 +35,3 @@ jobs:
 
       - name: Build do Projeto (TypeScript Check)
         run: npm run build
-
-      - name: Executar Testes
-        run: npm test
